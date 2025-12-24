@@ -1,0 +1,66 @@
+---
+- name: Add Docker repo
+  become: true
+  ansible.builtin.deb822_repository:
+    name: docker
+    types: [deb]
+    uris: "https://download.docker.com/linux/debian"
+    suites: ["{{ ansible_facts['distribution_release'] }}"]
+    components: [stable]
+    signed_by: https://download.docker.com/linux/debian/gpg
+    state: present
+    enabled: true
+
+- name: Update apt and install docker-ce
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+
+- name: Configure Docker daemon to use syslog logging
+  become: true
+  ansible.builtin.copy:
+    content: |
+      {
+          "log-driver": "syslog",
+          "log-opts": {
+              "syslog-address": "unixgram:///dev/log",
+              "tag": "{{ '{{.Name}}/{{.ID}}' }}"
+          }
+      }
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart docker
+
+# - name: Install Docker Module for Python
+#   become: true
+#   pip:
+#     name: "{{ item }}"
+#   with_items:
+#     - docker
+#     - docker-compose
+
+# - name: Refresh ansible facts to include docker information
+#   setup:
+
+# - name: Ensure docker group exists
+#   become: true
+#   ansible.builtin.group:
+#     name: docker
+#     state: present
+
+# - name: adding '{{ item }}' to group docker
+#   become: true
+#   user:
+#     name: '{{ item }}'
+#     groups: docker
+#     append: true
+#   loop: "{{ docker_users }}"
