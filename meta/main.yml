@@ -1,5 +1,7 @@
 ---
 galaxy_info:
+  role_name: docker
+  namespace: robertyoung
   author: RobertYoung
   description: Ansible role for installing and configuring Docker on Ubuntu/Debian systems
   license: MIT
