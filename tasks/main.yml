@@ -25,20 +25,14 @@
 
 - name: Configure Docker daemon to use syslog logging
   become: true
-  ansible.builtin.copy:
-    content: |
-      {
-          "log-driver": "syslog",
-          "log-opts": {
-              "syslog-address": "unixgram:///dev/log",
-              "tag": "{{ '{{.Name}}/{{.ID}}' }}"
-          }
-      }
+  # before ansible-core 2.19, copy content that looks like JSON is written compact, changing it every run
+  ansible.builtin.template:
+    src: daemon.json.j2
     dest: /etc/docker/daemon.json
     owner: root
     group: root
     mode: '0644'
-  notify: restart docker
+  notify: Restart docker
 
 # - name: Install Docker Module for Python
 #   become: true
