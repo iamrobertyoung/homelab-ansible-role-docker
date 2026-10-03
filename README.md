@@ -27,7 +27,7 @@ Ansible role for installing and configuring Docker on Ubuntu/Debian systems.
 ### Install via requirements.yml
 
 ```yaml
-- src: git@github.com:RobertYoung/homelab-ansible-role-docker.git
+- src: git@github.com:iamrobertyoung/homelab-ansible-role-docker.git
   scm: git
   version: main
   name: docker
